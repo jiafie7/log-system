@@ -11,27 +11,27 @@ const char* LogSystem::s_log_level[LogSystem::log_count] =
   "FATAL"
 };
         
-LogSystem* LogSystem::getInstance()
-{
-  if (m_instance == nullptr)
-    m_instance = new LogSystem();
+// LogSystem* LogSystem::getInstance()
+// {
+//   if (m_instance == nullptr)
+//     m_instance = new LogSystem();
+//
+//   return m_instance;
+// }
+//
+// LogSystem* LogSystem::m_instance = nullptr;
 
-  return m_instance;
-}
-
-LogSystem* LogSystem::m_instance = nullptr;
-
-LogSystem::LogSystem()
-  : m_log_level(LogSystem::log_debug)
-  , m_len(0)
-  , m_max_size(0)
-{
-}
-
-LogSystem::~LogSystem()
-{
-  close();
-}
+// LogSystem::LogSystem()
+//   : m_log_level(LogSystem::log_debug)
+//   , m_len(0)
+//   , m_max_size(0)
+// {
+// }
+//
+// LogSystem::~LogSystem()
+// {
+//   close();
+// }
 
 void LogSystem::open(const std::string& filename)
 {

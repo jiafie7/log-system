@@ -8,6 +8,8 @@
 #include <sstream>
 #include <string>
 
+#include "utility/singleton.h"
+
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -18,19 +20,32 @@ namespace melon
 {
   namespace utility
   {
+// #define log_debug(format, ...) \
+//     LogSystem::getInstance()->log(LogSystem::log_debug, __FILE__, __LINE__, format, ##__VA_ARGS__)
+// #define log_info(format, ...) \
+//     LogSystem::getInstance()->log(LogSystem::log_info, __FILE__, __LINE__, format, ##__VA_ARGS__)
+// #define log_warn(format, ...) \
+//     LogSystem::getInstance()->log(LogSystem::log_warn, __FILE__, __LINE__, format, ##__VA_ARGS__)
+// #define log_error(format, ...) \
+//     LogSystem::getInstance()->log(LogSystem::log_error, __FILE__, __LINE__, format, ##__VA_ARGS__)
+// #define log_fatal(format, ...) \
+//     LogSystem::getInstance()->log(LogSystem::log_fatal, __FILE__, __LINE__, format, ##__VA_ARGS__)
+
 #define log_debug(format, ...) \
-    LogSystem::getInstance()->log(LogSystem::log_debug, __FILE__, __LINE__, format, ##__VA_ARGS__)
+    Singleton<LogSystem>::getInstance()->log(LogSystem::log_debug, __FILE__, __LINE__, format, ##__VA_ARGS__)
 #define log_info(format, ...) \
-    LogSystem::getInstance()->log(LogSystem::log_info, __FILE__, __LINE__, format, ##__VA_ARGS__)
+    Singleton<LogSystem>::getInstance()->log(LogSystem::log_info, __FILE__, __LINE__, format, ##__VA_ARGS__)
 #define log_warn(format, ...) \
-    LogSystem::getInstance()->log(LogSystem::log_warn, __FILE__, __LINE__, format, ##__VA_ARGS__)
+    Singleton<LogSystem>::getInstance()->log(LogSystem::log_warn, __FILE__, __LINE__, format, ##__VA_ARGS__)
 #define log_error(format, ...) \
-    LogSystem::getInstance()->log(LogSystem::log_error, __FILE__, __LINE__, format, ##__VA_ARGS__)
+    Singleton<LogSystem>::getInstance()->log(LogSystem::log_error, __FILE__, __LINE__, format, ##__VA_ARGS__)
 #define log_fatal(format, ...) \
-    LogSystem::getInstance()->log(LogSystem::log_fatal, __FILE__, __LINE__, format, ##__VA_ARGS__)
+    Singleton<LogSystem>::getInstance()->log(LogSystem::log_fatal, __FILE__, __LINE__, format, ##__VA_ARGS__)
 
     class LogSystem
     {
+      SINGLETON(LogSystem);
+
       public:
         enum LogLevel
         {
@@ -42,7 +57,7 @@ namespace melon
           log_count,
         };
         
-        static LogSystem* getInstance();
+        // static LogSystem* getInstance();
         
         void open(const std::string& filename);
         void close();
@@ -54,8 +69,8 @@ namespace melon
 
 
       private:
-        LogSystem();
-        ~LogSystem();
+        // LogSystem();
+        // ~LogSystem();
 
         void rotateLog();
         void getLocaltime(struct tm* time_info, const time_t* ticks);
@@ -64,13 +79,13 @@ namespace melon
       private:
         std::string m_filename;
         std::ofstream m_fout; 
-        int m_log_level;
-        int m_len;
-        int m_max_size;
-        bool m_console;
+        int m_log_level = log_debug;
+        int m_len = 0;
+        int m_max_size = 0;
+        bool m_console = true;
         static const char* s_log_level[log_count];
         
-        static LogSystem* m_instance;
+        // static LogSystem* m_instance;
     };
   }
 }
