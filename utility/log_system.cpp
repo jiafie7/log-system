@@ -80,15 +80,15 @@ void LogSystem::log(LogLevel level, const char* filename, int line, const char* 
   strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", &time_info);
 
   int len = 0;
-  // time level file:line
-  const char* fmt = "%s %s %s:%d ";
-  len = snprintf(nullptr, 0, fmt, timestamp, s_log_level[level], filename, line);
+  // [level] time file:line
+  const char* fmt = "[%s]\t %s\t %s:%d\t";
+  len = snprintf(nullptr, 0, fmt, s_log_level[level], timestamp, filename, line);
   
   std::ostringstream oss;
   if (len > 0)
   {
     char* buffer = new char[len + 1];
-    snprintf(buffer, len + 1, fmt, timestamp, s_log_level[level], filename, line);
+    snprintf(buffer, len + 1, fmt, s_log_level[level], timestamp, filename, line);
     buffer[len] = '\0';
     oss << buffer;
     m_len += len;
@@ -118,7 +118,7 @@ void LogSystem::log(LogLevel level, const char* filename, int line, const char* 
   m_fout.flush();
 
   if (m_console)
-    std::cout << str << '\n';
+    std::cout << str;
 
   if (m_max_size > 0 && m_len > m_max_size)
     rotateLog();

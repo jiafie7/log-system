@@ -4,14 +4,20 @@ using namespace melon::utility;
 
 int main()
 {
-  LogSystem::getInstance()->open("./../main.log");
-  LogSystem::getInstance()->setLevel(LogSystem::log_info);
+  // Initialize the logger
+  LogSystem::getInstance()->open("./../app.log");
+  LogSystem::getInstance()->setLevel(LogSystem::log_warn);
   LogSystem::getInstance()->setMaxSize(1024);
-  // LogSystem::getInstance()->setConsole(true);
-  for (int i = 0; i < 50; ++ i)
+  LogSystem::getInstance()->setConsole(true);
+
+  // Write logs
+  for (int i = 0; i < 20; ++ i)
   {
-    log_debug("%s %d", "It is a debug.", 123);
-    log_info("%s %d.", "It is a info.", 456);
+    log_debug("%s", "This is a debug message.");
+    log_info("%s", "Application started.");
+    log_warn("%s", "Potential issue detected.");
+    log_error("%s", "An error occurred.");
+    log_fatal("%s", "Critical failure!");
   }
   
   return 0;
