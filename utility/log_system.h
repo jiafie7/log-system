@@ -7,12 +7,28 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+
+#ifdef WIN32
+#include <windows.h>
+#else
 #include <unistd.h>
+#endif
 
 namespace melon
 {
   namespace utility
   {
+#define log_debug(format, ...) \
+    LogSystem::getInstance()->log(LogSystem::log_debug, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#define log_info(format, ...) \
+    LogSystem::getInstance()->log(LogSystem::log_info, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#define log_warn(format, ...) \
+    LogSystem::getInstance()->log(LogSystem::log_warn, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#define log_error(format, ...) \
+    LogSystem::getInstance()->log(LogSystem::log_error, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#define log_fatal(format, ...) \
+    LogSystem::getInstance()->log(LogSystem::log_fatal, __FILE__, __LINE__, format, ##__VA_ARGS__)
+
     class LogSystem
     {
       public:
@@ -26,18 +42,24 @@ namespace melon
           log_count,
         };
         
-        LogSystem();
-        ~LogSystem();
-
+        static LogSystem* getInstance();
+        
         void open(const std::string& filename);
         void close();
         
         void setLevel(LogLevel level);
         void setMaxSize(int size);
+        void setConsole(bool console);
         void log(LogLevel level, const char* filename, int line, const char* format, ...);
 
+
       private:
-        void rotate();
+        LogSystem();
+        ~LogSystem();
+
+        void rotateLog();
+        void getLocaltime(struct tm* time_info, const time_t* ticks);
+        void setSleep(int milliseconds);
 
       private:
         std::string m_filename;
@@ -45,7 +67,10 @@ namespace melon
         int m_log_level;
         int m_len;
         int m_max_size;
+        bool m_console;
         static const char* s_log_level[log_count];
+        
+        static LogSystem* m_instance;
     };
   }
 }

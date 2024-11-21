@@ -10,6 +10,16 @@ const char* LogSystem::s_log_level[LogSystem::log_count] =
   "ERROR",
   "FATAL"
 };
+        
+LogSystem* LogSystem::getInstance()
+{
+  if (m_instance == nullptr)
+    m_instance = new LogSystem();
+
+  return m_instance;
+}
+
+LogSystem* LogSystem::m_instance = nullptr;
 
 LogSystem::LogSystem()
   : m_log_level(LogSystem::log_debug)
@@ -26,10 +36,11 @@ LogSystem::~LogSystem()
 void LogSystem::open(const std::string& filename)
 {
   m_filename = filename;
-  m_len = 0;
   m_fout.open(filename, std::ios::app);
   if (m_fout.fail())
     throw std::logic_error("Open log file failed: " + filename);
+  m_fout.seekp(0, std::ios::end);
+  m_len = (int)m_fout.tellp();
 }
 
 void LogSystem::close()
@@ -45,6 +56,11 @@ void LogSystem::setLevel(LogLevel level)
 void LogSystem::setMaxSize(int size)
 {
   m_max_size = size;
+}
+
+void LogSystem::setConsole(bool console)
+{
+  m_console = console;
 }
 
 void LogSystem::log(LogLevel level, const char* filename, int line, const char* format, ...)
@@ -101,28 +117,49 @@ void LogSystem::log(LogLevel level, const char* filename, int line, const char* 
   m_fout << str;
   m_fout.flush();
 
+  if (m_console)
+    std::cout << str << '\n';
+
   if (m_max_size > 0 && m_len > m_max_size)
-  {
-    rotate();
-  }
-  
+    rotateLog();
 }
 
-void LogSystem::rotate()
+void LogSystem::rotateLog()
 {
   close();
-  sleep(1);
+  setSleep(1000);
 
   time_t ticks = time(nullptr);
   struct tm time_info = {0};
-  localtime_r(&ticks, &time_info);
+  getLocaltime(&time_info, &ticks);
+  // localtime_r(&ticks, &time_info);
   char timestamp[32] = {0};
   strftime(timestamp, sizeof(timestamp), "%Y-%m-%d_%H-%M-%S", &time_info);
-
   std::string filename = m_filename + timestamp;
   if (rename(m_filename.c_str(), filename.c_str()) != 0)
-    return;
+    throw std::logic_error("Rename log file failed");
 
   open(m_filename);
 }
+
+void LogSystem::setSleep(int milliseconds)
+{
+#ifdef WIN32
+  Sleep(milliseconds);
+#else
+  usleep(milliseconds * 1000);
+#endif
+}
+
+void LogSystem::getLocaltime(struct tm* time_info, const time_t* ticks)
+{
+#ifdef WIN32
+  localtime_s(time_info, ticks);
+#else
+  localtime_r(ticks, time_info);
+#endif
+}
+
+
+
 
