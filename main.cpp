@@ -5,10 +5,15 @@ using namespace melon::utility;
 int main()
 {
   // Initialize the logger
-  LogSystem::getInstance()->open("./../app.log");
-  LogSystem::getInstance()->setLevel(LogSystem::log_warn);
-  LogSystem::getInstance()->setMaxSize(1024);
-  LogSystem::getInstance()->setConsole(true);
+  // LogSystem::getInstance()->open("./../app.log");
+  // LogSystem::getInstance()->setLevel(LogSystem::log_warn);
+  // LogSystem::getInstance()->setMaxSize(1024);
+  // LogSystem::getInstance()->setConsole(true);
+
+  Singleton<LogSystem>::getInstance()->open("./../app.log");
+  Singleton<LogSystem>::getInstance()->setLevel(LogSystem::log_warn);
+  Singleton<LogSystem>::getInstance()->setMaxSize(1024);
+  Singleton<LogSystem>::getInstance()->setConsole(true);
 
   // Write logs
   for (int i = 0; i < 20; ++ i)
