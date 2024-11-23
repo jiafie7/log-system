@@ -5,7 +5,7 @@ A cross-platform, efficient, and customizable logging system implemented in C++.
 ## Features
 
 - **Customizable Initialization**: Configure the logging system at startup with options for maximum size of log file, enable or disable terminal output, log level.
-- **Support Log Levels**: Support five levels of logging: DEBUG, INFO, WARN, ERROR, and FATAL.
+- **Support Five Log Levels**: DEBUG, INFO, WARN, ERROR, and FATAL.
 - **Log Rolling**: Automatically renames and rotates log files when they exceed the maximum size, ensuring that the latest log entries are always in the current log file.
 - **Cross-Platform**: Support both Windows and Linux.
 - **Convenient Macros**: Simplifies function calls for each log level, allowing quick and clean integration into your code.
